@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MILZSTORE LOGIN | SYITEM ACTIVE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* Mencegah seleksi dan copy */
+        }
+
+        body {
+            min-height: 100vh;
+            background: url('https://files.catbox.moe/pcg4ux.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            backdrop-filter: brightness(0.8);
+        }
+
+        /* Overlay gelap */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+
+        /* Container login */
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 450px;
+            background: rgba(10, 10, 20, 0.85);
+            backdrop-filter: blur(14px);
+            border-radius: 36px;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,215,0,0.25);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,200,50,0.4);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+        .brand h1 {
+            color: #FFD966;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            font-weight: 800;
+        }
+        .brand p {
+            color: #ddd;
+            font-size: 0.75rem;
+            border-top: 1px dashed #ffd96680;
+            display: inline-block;
+            padding-top: 6px;
+        }
+
+        /* Mode Tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            background: rgba(0,0,0,0.6);
+            border-radius: 60px;
+            padding: 5px;
+        }
+        .mode-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: transparent;
+            color: #ccc;
+            border: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .mode-btn.active {
+            background: linear-gradient(135deg, #FFB347, #FF8C00);
+            color: #000;
+            box-shadow: 0 4px 12px rgba(255,140,0,0.5);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #FFE0A3;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #FFD96690;
+            border-radius: 40px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #FFB347;
+            box-shadow: 0 0 8px #ffb34780;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(95deg, #FFB347, #FF8C00);
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #1e1e2a;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 5px;
+        }
+        .login-btn:hover {
+            transform: scale(1.02);
+            background: linear-gradient(95deg, #FFA133, #FF7700);
+        }
+
+        .buy-access {
+            text-align: center;
+            margin-top: 25px;
+        }
+        .buy-access a {
+            color: #FFD966;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed #ffd966;
+            font-size: 0.85rem;
+        }
+        .error-msg {
+            background: #ff4d4d30;
+            border-left: 4px solid #ff4d4d;
+            padding: 10px;
+            border-radius: 12px;
+            color: #ffcccc;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        footer {
+            font-size: 10px;
+            text-align: center;
+            color: #aaa;
+            margin-top: 1.2rem;
+        }
+
+        /* Panel Owner khusus */
+        .owner-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #05070ce6;
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+        .owner-panel.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .owner-card {
+            background: #121826;
+            width: 90%;
+            max-width: 750px;
+            max-height: 85vh;
+            border-radius: 32px;
+            padding: 1.5rem;
+            border: 1px solid gold;
+            overflow-y: auto;
+            box-shadow: 0 20px 35px black;
+            color: #eee;
+            font-family: monospace;
+        }
+        .owner-card h2 {
+            color: gold;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .owner-card p.sub {
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+        .akun-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: #0a0f1a;
+            padding: 15px;
+            border-radius: 24px;
+        }
+        .akun-form input, .akun-form select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 40px;
+            border: none;
+            background: #232e42;
+            color: white;
+        }
+        .akun-form button {
+            background: #ff9800;
+            border: none;
+            padding: 0 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .akun-list {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .akun-item {
+            background: #1a2538;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .akun-info {
+            font-weight: bold;
+            word-break: break-word;
+        }
+        .del-btn {
+            background: #dc3545;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        .close-panel {
+            background: #6c757d;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        /* Music control di panel owner */
+        .music-control {
+            background: #00000055;
+            padding: 6px 12px;
+            border-radius: 40px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .music-control button {
+            background: #ffaa33;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .hidden-url {
+            display: none;
+        }
+        /* mencegah copy link */
+        a {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container" id="loginContainer">
+    <div class="brand">
+        <h1>MILZSTORE</h1>
+        <p>SYITEM ACTIVE • SECURE LOGIN</p>
+    </div>
+
+    <div class="mode-tabs" id="modeTabs">
+        <button class="mode-btn" data-mode="biasa">BIASA</button>
+        <button class="mode-btn" data-mode="berlevel">BERLEVEL</button>
+        <button class="mode-btn" data-mode="owner">OWNER</button>
+    </div>
+
+    <div id="errorMessage" class="error-msg" style="display: none;"></div>
+
+    <form id="loginForm">
+        <div class="input-group">
+            <label>USERNAME</label>
+            <input type="text" id="username" placeholder="Masukkan username" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>PASSWORD</label>
+            <input type="password" id="password" placeholder="Masukkan password" autocomplete="off">
+        </div>
+        <button type="submit" class="login-btn">LOGIN SEKARANG</button>
+    </form>
+
+    <div class="buy-access">
+        <a href="https://wa.me/6285885983218" target="_blank" rel="noopener noreferrer">📱 BELI AKSES PREMIUM → WhatsApp</a>
+    </div>
+    <footer>© MILZSTORE SECURE SYSTEM</footer>
+</div>
+
+<!-- PANEL OWNER (Buat/Hapus Akun + List Data + Music) -->
+<div id="ownerPanel" class="owner-panel">
+    <div class="owner-card">
+        <h2>👑 PANEL OWNER MILZSTORE</h2>
+        <p class="sub">🔐 Kelola Akun | Buat & Hapus Akun | Music Player</p>
+        
+        <div class="music-control">
+            <span>🎵 MUSIC LOGIN</span>
+            <button id="playMusicBtn">▶ PLAY</button>
+            <button id="pauseMusicBtn">⏸ PAUSE</button>
+        </div>
+        
+        <div class="akun-form">
+            <input type="text" id="newUsername" placeholder="Username baru">
+            <input type="text" id="newPassword" placeholder="Password">
+            <select id="newRole">
+                <option value="biasa">Akses Biasa</option>
+                <option value="berlevel">Akses Berlevel</option>
+                <option value="owner">Owner (super)</option>
+            </select>
+            <button id="createAkunBtn">➕ BUAT AKUN</button>
+        </div>
+        <h3>📋 DATA AKUN TERSIMPAN</h3>
+        <div id="akunListContainer" class="akun-list"></div>
+        <button class="close-panel" id="closeOwnerPanel">🔒 TUTUP PANEL & LOGOUT</button>
+        <audio id="ownerMusic" loop>
+            <source src="https://files.catbox.moe/oog0d0.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+</div>
+
+<!-- SEMUA URL TUJUAN DISEMBUNYIKAN (TIDAK MUNCUL, TIDAK BISA COPY) -->
+<div style="display:none;" id="hiddenUrls"></div>
+
+<script>
+    // ================== DATA AKUN DEFAULT ==================
+    let accounts = [
+        { username: "MEMBER", password: "BIASA", role: "biasa" },
+        { username: "PANEL", password: "VVIP MILZSTOR", role: "berlevel" },
+        { username: "MILZ", password: "OWNER", role: "owner" }
+    ];
+
+    // URL tujuan (tidak pernah ditampilkan di elemen copyable)
+    const TARGET_URLS = {
+        biasa: "https://panel.sayaocit.biz.id/RESSBIASAMILZSTORE/ultimate",
+        berlevel: "https://panel.sayaocit.biz.id/RQUESBEBASNAMLU/ultimate/",
+        owner: "https://panel.sayaocit.biz.id/RESSCAMPURANMILZSTOREM/ultimate"
+    };
+
+    let currentLoggedInRole = null;
+    let ownerMusic = null;
+
+    // DOM elements
+    const loginContainer = document.getElementById('loginContainer');
+    const ownerPanelDiv = document.getElementById('ownerPanel');
+    const errorMsgDiv = document.getElementById('errorMessage');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const loginForm = document.getElementById('loginForm');
+    let selectedMode = "biasa";
+
+    function showError(msg) {
+        errorMsgDiv.style.display = 'block';
+        errorMsgDiv.innerText = msg;
+        setTimeout(() => {
+            errorMsgDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    function setActiveMode(mode) {
+        selectedMode = mode;
+        modeBtns.forEach(btn => {
+            if(btn.getAttribute('data-mode') === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.getAttribute('data-mode');
+            setActiveMode(mode);
+        });
+    });
+
+    // Redirect berdasarkan role (tanpa menampilkan URL)
+    function redirectToLevel(role) {
+        let targetUrl = '';
+        if (role === 'biasa') targetUrl = TARGET_URLS.biasa;
+        else if (role === 'berlevel') targetUrl = TARGET_URLS.berlevel;
+        else if (role === 'owner') targetUrl = TARGET_URLS.owner;
+        
+        if(targetUrl) {
+            // Redirect langsung tanpa ada tampilan URL ke user
+            window.location.href = targetUrl;
+        } else {
+            showError("Tujuan akses tidak valid!");
+        }
+    }
+
+    // Proses login
+    function handleLogin(event) {
+        event.preventDefault();
+        const inputUsername = usernameInput.value.trim();
+        const inputPassword = passwordInput.value;
+
+        if(inputUsername === "" || inputPassword === "") {
+            showError("Username dan password harus diisi!");
+            return;
+        }
+
+        const foundAccount = accounts.find(acc => acc.username === inputUsername && acc.password === inputPassword);
+        if(!foundAccount) {
+            showError("Username atau password salah!");
+            return;
+        }
+
+        const roleAccount = foundAccount.role;
+        if(roleAccount !== selectedMode) {
+            showError(`Akses ditolak! Akun ${roleAccount.toUpperCase()} tidak memiliki izin untuk mode ${selectedMode.toUpperCase()}.`);
+            return;
+        }
+
+        currentLoggedInRole = roleAccount;
+
+        // JIKA OWNER => buka panel khusus (tidak redirect)
+        if(roleAccount === 'owner') {
+            loginContainer.style.display = 'none';
+            ownerPanelDiv.classList.add('active');
+            // Inisialisasi music
+            ownerMusic = document.getElementById('ownerMusic');
+            ownerMusic.loop = true;
+            ownerMusic.volume = 0.5;
+            // Coba play otomatis (browser mungkin blok, tapi user bisa klik tombol play)
+            ownerMusic.play().catch(e => console.log("Autoplay di blokir, gunakan tombol play"));
+            renderAkunList();
+        } 
+        else {
+            // Untuk biasa & berlevel: redirect langsung
+            redirectToLevel(roleAccount);
+        }
+    }
+
+    loginForm.addEventListener('submit', handleLogin);
+
+    // ========== PANEL OWNER: CRUD AKUN & LIST, MUSIC ==========
+    const newUsernameField = document.getElementById('newUsername');
+    const newPasswordField = document.getElementById('newPassword');
+    const newRoleSelect = document.getElementById('newRole');
+    const createBtn = document.getElementById('createAkunBtn');
+    const akunListContainer = document.getElementById('akunListContainer');
+    const closeOwnerBtn = document.getElementById('closeOwnerPanel');
+    const playMusicBtn = document.getElementById('playMusicBtn');
+    const pauseMusicBtn = document.getElementById('pauseMusicBtn');
+
+    function renderAkunList() {
+        if(!akunListContainer) return;
+        akunListContainer.innerHTML = '';
+        if(accounts.length === 0) {
+            akunListContainer.innerHTML = '<div style="text-align:center; padding:20px;">Belum ada akun terdaftar.</div>';
+            return;
+        }
+        accounts.forEach((acc, index) => {
+            const roleDisplay = acc.role === 'biasa' ? '🔵 BIASA' : (acc.role === 'berlevel' ? '🟠 BERLEVEL' : '🔴 OWNER');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'akun-item';
+            itemDiv.innerHTML = `
+                <div class="akun-info">
+                    <strong>${escapeHtml(acc.username)}</strong> | ${roleDisplay}
+                </div>
+                <button class="del-btn" data-index="${index}">HAPUS</button>
+            `;
+            akunListContainer.appendChild(itemDiv);
+        });
+        // Event hapus
+        document.querySelectorAll('.del-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(btn.getAttribute('data-index'));
+                if(!isNaN(idx) && idx >= 0 && idx < accounts.length) {
+                    const accountToDelete = accounts[idx];
+                    if(confirm(`Yakin hapus akun "${accountToDelete.username}" ?`)) {
+                        accounts.splice(idx, 1);
+                        renderAkunList();
+                        showToastPanel(`✅ Akun ${accountToDelete.username} dihapus`);
+                    }
+                }
+            });
+        });
+    }
+
+    function showToastPanel(msg) {
+        const toast = document.createElement('div');
+        toast.style.background = '#2c2f36';
+        toast.style.padding = '8px';
+        toast.style.borderRadius = '30px';
+        toast.style.margin = '10px auto';
+        toast.style.textAlign = 'center';
+        toast.style.fontSize = '12px';
+        toast.style.border = '1px solid #ffaa44';
+        toast.innerText = msg;
+        akunListContainer.parentNode.insertBefore(toast, akunListContainer.nextSibling);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    function createAccount() {
+        let newUser = newUsernameField.value.trim();
+        let newPass = newPasswordField.value.trim();
+        let newRole = newRoleSelect.value;
+        if(newUser === "" || newPass === "") {
+            showToastPanel("❌ Username dan password tidak boleh kosong!");
+            return;
+        }
+        const exists = accounts.some(acc => acc.username === newUser);
+        if(exists) {
+            showToastPanel("❌ Username sudah terdaftar!");
+            return;
+        }
+        accounts.push({ username: newUser, password: newPass, role: newRole });
+        renderAkunList();
+        newUsernameField.value = "";
+        newPasswordField.value = "";
+        showToastPanel(`✅ Berhasil buat akun: ${newUser} (${newRole})`);
+    }
+
+    createBtn.addEventListener('click', createAccount);
+
+    // Music controls
+    if(playMusicBtn && pauseMusicBtn) {
+        playMusicBtn.addEventListener('click', () => {
+            if(ownerMusic) {
+                ownerMusic.play().catch(e => console.log);
+                showToastPanel("🎵 Music Play");
+            }
+        });
+        pauseMusicBtn.addEventListener('click', () => {
+            if(ownerMusic) ownerMusic.pause();
+            showToastPanel("⏸ Music Pause");
+        });
+    }
+
+    // Tutup panel owner, kembali ke login, stop music
+    closeOwnerBtn.addEventListener('click', () => {
+        ownerPanelDiv.classList.remove('active');
+        loginContainer.style.display = 'block';
+        if(ownerMusic) {
+            ownerMusic.pause();
+            ownerMusic.currentTime = 0;
+        }
+        usernameInput.value = '';
+        passwordInput.value = '';
+        setActiveMode('biasa');
+        selectedMode = 'biasa';
+        currentLoggedInRole = null;
+        // reset error
+        errorMsgDiv.style.display = 'none';
+    });
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // ========== KEIAMANAN: SEMUA LINGK TUJUAN TIDAK BISA DI COPY, LANGGAR DIPERINGATKAN, KECUALI OWNER ==========
+    // Fungsi memblokir copy teks dari seluruh halaman (termasuk URL tersembunyi sekalipun tidak ada)
+    document.body.addEventListener('copy', (e) => {
+        // Owner yang sedang membuka panel? Namun tetap tidak bisa copy link karena link tidak pernah terlihat.
+        // Tapi untuk memenuhi "langgar akses dihapus kecuali owner" -> jika non owner mencoba copy akan diblokir total.
+        if(currentLoggedInRole !== 'owner') {
+            e.preventDefault();
+            showError("⚠️ DILARANG COPY! Akses ditolak.");
+            return false;
+        }
+        // jika owner, biarkan copy teks biasa (namun tidak ada URL tujuan yang tersedia untuk dicopy)
+        return true;
+    });
+    
+    document.body.addEventListener('cut', (e) => {
+        if(currentLoggedInRole !== 'owner') {
+            e.preventDefault();
+            showError("Aksi terlarang!");
+        }
+    });
+    
+    document.body.addEventListener('contextmenu', (e) => {
+        // Non-owner tidak boleh klik kanan
+        if(currentLoggedInRole !== 'owner') {
+            e.preventDefault();
+            showError("Menu klik kanan dinonaktifkan!");
+            return false;
+        }
+    });
+    
+    // Cegah inspect element melalui shortcut (Ctrl+Shift+I / Ctrl+Shift+J / F12) secara sederhana
+    document.addEventListener('keydown', (e) => {
+        if(currentLoggedInRole !== 'owner') {
+            if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                showError("Akses developer tools dilarang!");
+                return false;
+            }
+        }
+    });
+    
+    // Sembunyikan semua URL secara hardcode tidak muncul dalam teks yang bisa di-copy.
+    // Tidak ada elemen yang menampilkan URL tujuan di hyman. Redirect langsung tanpa menampilkan string URL di popup.
+    // Juga semua link WA hanya boleh diakses, link lain diblok.
+    document.querySelectorAll('a').forEach(link => {
+        if(link.href.includes('wa.me')) {
+            // izinkan
+        } else {
+            link.addEventListener('click', (e) => {
+                if(link.getAttribute('href') && !link.href.includes('wa.me')) {
+                    e.preventDefault();
+                    showError("Akses link tidak diizinkan!");
+                }
+            });
+        }
+    });
+
+    // Tambahan perlindungan: Jika mencoba menyalin dari elemen tersembunyi atau apapun tetap gagal.
+    // Juga pastikan tidak ada akses langsung ke URL tujuan selain melalui login.
+    // Setiap akses biasa & berlevel langsung redirect tanpa preview.
+    window.addEventListener('load', () => {
+        ownerPanelDiv.classList.remove('active');
+        loginContainer.style.display = 'block';
+        setActiveMode('biasa');
+        selectedMode = 'biasa';
+        // Sembunyikan semua URL di konsol? tidak diperlukan.
+        // Fitur tambahan: Untuk mencegah orang melihat source url? mereka bisa melihat di dalam script variable TARGET_URLS, tapi itu tidak bisa disalin lewat interaksi user karena blok copy.
+        // namun sesuai permintaan menyembunyikan semua akses + no copy link, hal sudah dilakukan. 
+        // Jika mengakses "owner" akan dapat music & buat akun/hapus.
+        console.log("%c⚠️ MILZSTORE SECURE SYSTEM | DILARANG MENYALIN", "color:red;font-size:16px");
+    });
+    
+    // Inisialisasi render (biar panel owner punya list saat dibuka)
+    // untuk membuat jika owner login pertama kali sudah ada daftar akun
+
+    // validasi extra: jangan sampai ada yang bisa melihat URL destinasi di elemen html, kita tidak menampilkan di html mana pun
+    // semua URL redirect hanya muncul di variabel js, namun tidak bisa di-copy user karena blok copy dan devtools diblokir (pencegahan sederhana)
+    // Namun tetap ada celah, tapi sesuai dengan requirement maksimal.
+</script>
+</body>
+</html>
